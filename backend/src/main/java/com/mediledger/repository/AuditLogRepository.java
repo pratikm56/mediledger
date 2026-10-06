@@ -11,5 +11,6 @@ import java.util.List;
 @Repository
 public interface AuditLogRepository extends JpaRepository<AuditLog, Long> {
     List<AuditLog> findByUserIdOrderByCreatedAtDesc(Long userId);
+    List<AuditLog> findByActionOrderByCreatedAtDesc(String action);
     Page<AuditLog> findAllByOrderByCreatedAtDesc(Pageable pageable);
 }

@@ -6,6 +6,7 @@ import { AppLayout } from './components/layout/AppLayout';
 import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { UsersPage } from './pages/UsersPage';
+import { MedicinesPage } from './pages/MedicinesPage';
 
 export const App: React.FC = () => {
   return (
@@ -25,6 +26,7 @@ export const App: React.FC = () => {
             }
           >
             <Route index element={<DashboardPage />} />
+            <Route path="medicines" element={<MedicinesPage />} />
             <Route
               path="users"
               element={
