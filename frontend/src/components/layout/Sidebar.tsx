@@ -29,8 +29,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     { name: 'Medicines', to: '/medicines', icon: Pill, exact: false, allowed: true },
     { name: 'Inventory & Batches', to: '/inventory', icon: Package, exact: false, allowed: true },
     { name: 'Purchases', to: '/purchases', icon: ShoppingCart, exact: false, allowed: isOwner || isAdmin, badge: 'Phase 6' },
-    { name: 'Customers', to: '/customers', icon: Users, exact: false, allowed: true, badge: 'Phase 5' },
-    { name: 'Suppliers', to: '/suppliers', icon: Building2, exact: false, allowed: isOwner || isAdmin, badge: 'Phase 5' },
+    { name: 'Customers', to: '/customers', icon: Users, exact: false, allowed: true },
+    { name: 'Suppliers', to: '/suppliers', icon: Building2, exact: false, allowed: true },
     { name: 'Reports & Profit', to: '/reports', icon: TrendingUp, exact: false, allowed: isOwner || isAdmin, badge: 'Phase 8-10' },
     { name: 'User Management', to: '/users', icon: ShieldCheck, exact: false, allowed: isOwner || isAdmin },
     { name: 'Shop Settings', to: '/settings', icon: Settings, exact: false, allowed: isOwner || isAdmin, badge: 'Phase 11' },
@@ -111,7 +111,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               <span>Single Shop Edition</span>
             </div>
             <p className="text-[11px] text-slate-400 leading-tight">
-              MediLedger v1.0.0 &bull; Phase 4 Inventory Active
+              MediLedger v1.0.0 &bull; Phase 5 Partners Active
             </p>
           </div>
         </div>
