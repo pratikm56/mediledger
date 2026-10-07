@@ -13,7 +13,8 @@ import {
   Settings, 
   ShieldCheck, 
   X,
-  Wallet
+  Wallet,
+  ClipboardList
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -21,10 +22,19 @@ interface SidebarProps {
   onClose: () => void;
 }
 
+interface NavigationItem {
+  name: string;
+  to: string;
+  icon: React.ComponentType<{ className?: string }>;
+  exact: boolean;
+  allowed: boolean;
+  badge?: string;
+}
+
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const { isOwner, isAdmin } = useAuth();
 
-  const navigationItems = [
+  const navigationItems: NavigationItem[] = [
     { name: 'Dashboard', to: '/', icon: LayoutDashboard, exact: true, allowed: true },
     { name: 'Billing / POS', to: '/billing', icon: Receipt, exact: false, allowed: true },
     { name: 'Medicines', to: '/medicines', icon: Pill, exact: false, allowed: true },
@@ -34,8 +44,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     { name: 'Suppliers', to: '/suppliers', icon: Building2, exact: false, allowed: true },
     { name: 'Expenses & Flow', to: '/expenses', icon: Wallet, exact: false, allowed: true },
     { name: 'Reports & Analytics', to: '/reports', icon: TrendingUp, exact: false, allowed: true },
+    { name: 'Audit Trail', to: '/audit-logs', icon: ClipboardList, exact: false, allowed: isOwner || isAdmin },
     { name: 'User Management', to: '/users', icon: ShieldCheck, exact: false, allowed: isOwner || isAdmin },
-    { name: 'Shop Settings', to: '/settings', icon: Settings, exact: false, allowed: isOwner || isAdmin, badge: 'Phase 11' },
+    { name: 'Shop Settings', to: '/settings', icon: Settings, exact: false, allowed: true },
   ];
 
   return (
