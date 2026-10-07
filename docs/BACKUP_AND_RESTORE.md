@@ -1,64 +1,136 @@
-# 💾 MediLedger Backup & Disaster Recovery Guide
+# 💾 MediLedger Backup, Restore & Disaster Recovery Runbook
 
-Database integrity is mission critical for medical shop financial records, inventory valuation, and GST compliance.
+Database integrity and rapid recovery are mission-critical for a pharmacy to safeguard historical medical invoices, inventory batches, ledger balances, and GST compliance records.
 
----
-
-## 1. Production Backup Strategy (Aiven PostgreSQL)
-
-1. **Automated Backups**:
-   - Aiven PostgreSQL automatically takes continuous Write-Ahead Log (WAL) backups and daily full snapshots.
-   - Point-in-time recovery (PITR) is supported on all standard tiers.
-2. **Backup Retention**:
-   - Free/Development tier: Retains backups according to plan limits.
-   - Production tier: Set to 7–30 days retention depending on business requirements.
+This document outlines the backup automation, test restoration, and recovery procedures across all operational scenarios.
 
 ---
 
-## 2. Manual Backup (Logical Dump with pg_dump)
+## 1. Multi-Tier Backup Strategy
 
-To take a standalone offline logical dump of the PostgreSQL database:
+MediLedger employs a **two-tier defense-in-depth backup strategy**:
 
-```bash
-# Set credentials
-export PGDATABASE="mediledger"
-export PGUSER="postgres"
-export PGHOST="localhost"
-export PGPORT="5432"
+### Tier 1: Cloud-Native Continuous Backups (Aiven PostgreSQL)
+- **Continuous WAL Streaming**: Every single commit is immediately written to Write-Ahead Logging (WAL) cloud storage.
+- **Automated Daily Snapshots**: Full automated daily image backups taken by Aiven infrastructure.
+- **Point-in-Time Recovery (PITR)**: Ability to restore the database to any specific minute in the last 7 to 30 days directly in the Aiven Console.
 
-# Perform compressed custom-format backup
-pg_dump -Fc -v -f "mediledger_backup_$(date +%Y%m%d_%H%M%S).dump"
-```
-
-For plain SQL script backup:
-```bash
-pg_dump --clean --if-exists -f "mediledger_backup_$(date +%Y%m%d).sql"
-```
+### Tier 2: Automated Off-Site Logical Dumps (`pg_dump`)
+- Automated daily export using custom compressed format (`.dump`) with 30-day automatic retention rotation.
+- Can be saved locally, to encrypted external storage (USB/NAS), or secondary cloud storage (AWS S3 / Google Cloud Storage).
 
 ---
 
-## 3. Disaster Recovery & Database Restore Process
+## 2. Automated Backup Execution
 
-To restore from a backup file:
+### Windows (PowerShell)
+MediLedger includes [`scripts/backup-db.ps1`](file:///d:/moneyLedger/scripts/backup-db.ps1):
 
-### From Custom Format (`.dump`):
-```bash
-pg_restore -v --clean --if-exists -d mediledger "mediledger_backup_<TIMESTAMP>.dump"
+```powershell
+# Run manual backup of local database
+powershell -ExecutionPolicy Bypass -File scripts/backup-db.ps1
+
+# Run backup targeting Aiven PostgreSQL cloud database
+powershell -ExecutionPolicy Bypass -File scripts/backup-db.ps1 `
+  -Hostname "mediledger-db-prod.aivencloud.com" `
+  -Port 25432 `
+  -Username "avnadmin" `
+  -DatabaseName "defaultdb" `
+  -BackupDir "D:\mediledger_backups" `
+  -RetentionDays 30
 ```
 
-### From SQL Script (`.sql`):
+### Linux / macOS / Server (Bash)
+MediLedger includes [`scripts/backup-db.sh`](file:///d:/moneyLedger/scripts/backup-db.sh):
+
 ```bash
-psql -d mediledger -f "mediledger_backup_<TIMESTAMP>.sql"
+chmod +x scripts/backup-db.sh
+./scripts/backup-db.sh "defaultdb" "mediledger-db-prod.aivencloud.com" 25432 "avnadmin" "./backups" 30
 ```
 
 ---
 
-## 4. Verification & Testing Procedure
+## 3. Scheduling Automated Daily Backups
 
-Before declaring any backup operational:
-1. Restore the dump into a temporary test database (e.g. `mediledger_restore_test`).
-2. Verify row counts and integrity:
-   - Check `flyway_schema_history` matches latest migration version.
-   - Verify `roles` and `users` records.
-   - Verify balance sheets and stock transaction tallies.
-3. Drop the temporary test database after verification.
+### Windows Task Scheduler (Pharmacy In-Store PC)
+To run automated daily backups at 11:00 PM:
+1. Open **Task Scheduler** (`taskschd.msc`).
+2. Click **Create Basic Task...**
+3. Name: `MediLedger Daily Backup`.
+4. Trigger: **Daily** at `23:00` (11:00 PM).
+5. Action: **Start a program**.
+   - Program: `powershell.exe`
+   - Arguments: `-ExecutionPolicy Bypass -WindowStyle Hidden -File "D:\moneyLedger\scripts\backup-db.ps1"`
+6. Click **Finish**.
+
+### Linux / Server Cron Job
+Add to crontab via `crontab -e`:
+```bash
+# Run MediLedger database backup every night at 23:00 (11:00 PM)
+0 23 * * * /opt/mediledger/scripts/backup-db.sh >> /var/log/mediledger-backup.log 2>&1
+```
+
+---
+
+## 4. Disaster Recovery & Restoration Procedures
+
+### Scenario A: Minor Data Corruption or Accidental Record Deletion
+If staff accidentally modify or delete financial records:
+1. Point-in-time recovery via Aiven Console:
+   - Navigate to Aiven Console -> `mediledger-db-prod` -> **Backups**.
+   - Click **Fork / Restore to a Point in Time**.
+   - Select the timestamp 5 minutes prior to the accidental change.
+   - Aiven creates a new restored database service within 3 minutes.
+   - Update `SPRING_DATASOURCE_URL` in the Render dashboard to point to the restored service.
+
+### Scenario B: Restoring from a Logical Backup File (`.dump`)
+To restore an offline backup into a target PostgreSQL database:
+
+#### On Windows:
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/restore-db.ps1 `
+  -BackupFile "backups/mediledger_backup_20261007_230000.dump" `
+  -DatabaseName "mediledger" `
+  -Hostname "localhost" `
+  -Port 5432 `
+  -Username "postgres"
+```
+
+#### On Linux / macOS:
+```bash
+./scripts/restore-db.sh "backups/mediledger_backup_20261007_230000.dump" "mediledger" "localhost" 5432 "postgres"
+```
+
+---
+
+## 5. Verification & Testing Checklist
+
+Whenever restoring a database:
+1. **Verify Flyway Migration State**:
+   ```sql
+   SELECT version, description, installed_on, success FROM flyway_schema_history ORDER BY installed_rank DESC LIMIT 5;
+   ```
+   Ensure version is at `10` and `success` is `true`.
+2. **Verify User Accounts**:
+   ```sql
+   SELECT id, username, full_name, active FROM users;
+   ```
+   Ensure administrative accounts (`owner`, `admin`, `staff`) exist.
+3. **Verify Medicine & Batch Stock Valuation**:
+   ```sql
+   SELECT COUNT(*) AS total_batches, SUM(quantity) AS total_units FROM medicine_batches;
+   ```
+4. **Verify Customer & Supplier Ledger Balances**:
+   ```sql
+   SELECT SUM(current_balance) FROM customers;
+   SELECT SUM(current_balance) FROM suppliers;
+   ```
+5. **Verify Audit Trail Consistency**:
+   ```sql
+   SELECT COUNT(*) FROM audit_logs;
+   ```
+6. Start the Spring Boot backend in `validate` mode:
+   ```bash
+   mvn test -Dtest=DatabaseBackupRestoreVerificationTest
+   ```
+   If all tests pass, the restored database is declared 100% operationally verified.
