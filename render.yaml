@@ -1,0 +1,31 @@
+# ==============================================================================
+# MediLedger Render Infrastructure Blueprint
+# Documentation: https://render.com/docs/blueprint-spec
+# ==============================================================================
+
+services:
+  - type: web
+    name: mediledger-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    region: oregon
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: PORT
+        value: 8080
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRATION
+        value: 86400000
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false

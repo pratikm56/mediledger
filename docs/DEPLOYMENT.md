@@ -41,23 +41,15 @@ This guide covers deployment instructions for the target low-budget production s
 
 ## 3. Render Backend Deployment
 
-1. Create a new **Web Service** in [Render Dashboard](https://dashboard.render.com).
-2. Connect your GitHub repository.
-3. Configure settings:
-   - **Root Directory**: `backend`
-   - **Runtime**: Docker or Java (Maven)
-   - **Build Command**: `./mvnw clean package -DskipTests`
-   - **Start Command**: `java -Dserver.port=$PORT -jar target/mediledger-backend-1.0.0-SNAPSHOT.jar`
-4. Set Environment Variables in Render:
-   | Variable | Value | Notes |
-   |---|---|---|
-   | `DATABASE_URL` | `jdbc:postgresql://<AIVEN_HOST>:<PORT>/defaultdb?sslmode=require` | Aiven connection URL |
-   | `DATABASE_USERNAME` | `avnadmin` | Database username |
-   | `DATABASE_PASSWORD` | `<AIVEN_SECRET_PASSWORD>` | Secret password |
-   | `JWT_SECRET` | `<SECURE_64_CHAR_HEX_KEY>` | 256-bit secret |
-   | `JWT_EXPIRATION` | `86400000` | 24 hours in ms |
-   | `CORS_ALLOWED_ORIGINS` | `https://mediledger.vercel.app` | Production frontend domain |
-5. Set Health Check Path: `/actuator/health`
+For the exhaustive step-by-step guide with automated Blueprint configuration:
+See [🚀 Render Backend Deployment Guide](RENDER_DEPLOYMENT.md).
+
+Quick Deploy via Render Blueprint:
+1. Push this repository to GitHub.
+2. In [Render Dashboard](https://dashboard.render.com), click **New +** -> **Blueprint**.
+3. Render automatically provisions the Web Service using [`render.yaml`](../render.yaml) with multi-stage Docker builds and health probes configured.
+4. Input your Aiven database credentials when prompted.
+
 
 ---
 
