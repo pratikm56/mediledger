@@ -37,11 +37,6 @@ export const LoginPage: React.FC = () => {
     }
   };
 
-  const handleQuickLogin = (user: string, pass: string) => {
-    setUsernameOrEmail(user);
-    setPassword(pass);
-    setErrorMessage(null);
-  };
 
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col justify-center items-center p-4 selection:bg-emerald-500 selection:text-white">
@@ -74,7 +69,7 @@ export const LoginPage: React.FC = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} autoComplete="off" className="space-y-4">
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Username or Email
@@ -86,9 +81,10 @@ export const LoginPage: React.FC = () => {
                 <input
                   type="text"
                   required
+                  autoComplete="off"
                   value={usernameOrEmail}
                   onChange={(e) => setUsernameOrEmail(e.target.value)}
-                  placeholder="e.g. owner or staff"
+                  placeholder="Enter your username or email"
                   className="w-full pl-9 pr-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-slate-800"
                 />
               </div>
@@ -105,6 +101,7 @@ export const LoginPage: React.FC = () => {
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
+                  autoComplete="new-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
@@ -138,41 +135,6 @@ export const LoginPage: React.FC = () => {
               )}
             </button>
           </form>
-
-          {/* Quick Demo Credentials */}
-          <div className="pt-2 border-t border-slate-100">
-            <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider text-center mb-3">
-              Quick Role Presets
-            </p>
-            <div className="grid grid-cols-3 gap-2">
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('owner', 'Owner@123')}
-                className="p-2 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/40 text-center transition-all group"
-              >
-                <span className="block text-xs font-bold text-slate-800 group-hover:text-emerald-700">Owner</span>
-                <span className="block text-[10px] text-slate-400">Full Access</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('admin', 'Admin@123')}
-                className="p-2 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/40 text-center transition-all group"
-              >
-                <span className="block text-xs font-bold text-slate-800 group-hover:text-emerald-700">Admin</span>
-                <span className="block text-[10px] text-slate-400">Management</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('staff', 'Staff@123')}
-                className="p-2 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/40 text-center transition-all group"
-              >
-                <span className="block text-xs font-bold text-slate-800 group-hover:text-emerald-700">Staff</span>
-                <span className="block text-[10px] text-slate-400">Billing/Stock</span>
-              </button>
-            </div>
-          </div>
         </div>
 
         {/* Security badge footer */}
