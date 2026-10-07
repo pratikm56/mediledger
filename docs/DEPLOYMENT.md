@@ -55,17 +55,16 @@ Quick Deploy via Render Blueprint:
 
 ## 4. Vercel Frontend Deployment
 
+For the exhaustive step-by-step guide with SPA routing, CORS synchronization, and custom domains:
+See [🌐 Vercel Frontend Deployment Guide](VERCEL_DEPLOYMENT.md).
+
+Quick Deploy to Vercel:
 1. Import your GitHub repository in [Vercel](https://vercel.com).
-2. Configure project settings:
-   - **Root Directory**: `frontend`
-   - **Framework Preset**: Vite
-   - **Build Command**: `npm run build`
-   - **Output Directory**: `dist`
-3. Set Environment Variable in Vercel:
-   | Variable | Value |
-   |---|---|
-   | `VITE_API_BASE_URL` | `https://<YOUR-RENDER-BACKEND>.onrender.com/api` |
-4. Deploy!
+2. Set **Root Directory** to `frontend`.
+3. Set Environment Variable:
+   - `VITE_API_BASE_URL` = `https://<YOUR-RENDER-BACKEND>.onrender.com/api`
+4. Deploy! SPA deep routes are handled automatically via [`frontend/vercel.json`](../frontend/vercel.json).
+
 
 ---
 
