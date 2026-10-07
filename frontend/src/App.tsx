@@ -12,6 +12,7 @@ import { CustomersPage } from './pages/CustomersPage';
 import { SuppliersPage } from './pages/SuppliersPage';
 import { PurchasesPage } from './pages/PurchasesPage';
 import { BillingPage } from './pages/BillingPage';
+import { ExpensesPage } from './pages/ExpensesPage';
 
 export const App: React.FC = () => {
   return (
@@ -44,6 +45,7 @@ export const App: React.FC = () => {
                 </ProtectedRoute>
               }
             />
+            <Route path="expenses" element={<ExpensesPage />} />
             <Route
               path="users"
               element={

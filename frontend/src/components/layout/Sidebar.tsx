@@ -12,7 +12,8 @@ import {
   TrendingUp, 
   Settings, 
   ShieldCheck, 
-  X
+  X,
+  Wallet
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -31,7 +32,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     { name: 'Purchases', to: '/purchases', icon: ShoppingCart, exact: false, allowed: isOwner || isAdmin },
     { name: 'Customers', to: '/customers', icon: Users, exact: false, allowed: true },
     { name: 'Suppliers', to: '/suppliers', icon: Building2, exact: false, allowed: true },
-    { name: 'Reports & Profit', to: '/reports', icon: TrendingUp, exact: false, allowed: isOwner || isAdmin, badge: 'Phase 8-10' },
+    { name: 'Expenses & Flow', to: '/expenses', icon: Wallet, exact: false, allowed: true },
+    { name: 'Reports & Profit', to: '/reports', icon: TrendingUp, exact: false, allowed: isOwner || isAdmin, badge: 'Phase 9-10' },
     { name: 'User Management', to: '/users', icon: ShieldCheck, exact: false, allowed: isOwner || isAdmin },
     { name: 'Shop Settings', to: '/settings', icon: Settings, exact: false, allowed: isOwner || isAdmin, badge: 'Phase 11' },
   ];
@@ -111,7 +113,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               <span>Single Shop Edition</span>
             </div>
             <p className="text-[11px] text-slate-400 leading-tight">
-              MediLedger v1.0.0 &bull; Phase 7 POS &amp; Billing Active
+              MediLedger v1.0.0 &bull; Phase 8 Expenses &amp; Cash Flow Active
             </p>
           </div>
         </div>
