@@ -33,7 +33,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     { name: 'Customers', to: '/customers', icon: Users, exact: false, allowed: true },
     { name: 'Suppliers', to: '/suppliers', icon: Building2, exact: false, allowed: true },
     { name: 'Expenses & Flow', to: '/expenses', icon: Wallet, exact: false, allowed: true },
-    { name: 'Reports & Profit', to: '/reports', icon: TrendingUp, exact: false, allowed: isOwner || isAdmin, badge: 'Phase 9-10' },
+    { name: 'Reports & Analytics', to: '/reports', icon: TrendingUp, exact: false, allowed: true },
     { name: 'User Management', to: '/users', icon: ShieldCheck, exact: false, allowed: isOwner || isAdmin },
     { name: 'Shop Settings', to: '/settings', icon: Settings, exact: false, allowed: isOwner || isAdmin, badge: 'Phase 11' },
   ];
