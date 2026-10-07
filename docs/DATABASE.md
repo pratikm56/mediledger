@@ -70,15 +70,24 @@ Immutable audit trail for security and system events.
 
 ---
 
-## 3. Migration Roadmap
+## 3. Flyway Migrations Status (All Implemented)
 
-- `V1__initial_schema.sql` (Implemented - Phase 1 Foundation: roles, users, settings, audit)
-- `V2__authentication.sql` (Phase 2 - Authentication & initial admin seed)
-- `V3__medicine_management.sql` (Phase 3 - Categories, Manufacturers, Medicines)
-- `V4__inventory.sql` (Phase 4 - Medicine batches, Stock transactions)
-- `V5__customers_suppliers.sql` (Phase 5 - Customers, Suppliers, Ledgers)
-- `V6__sales.sql` (Phase 6 - Invoices, Sale items)
-- `V7__purchases.sql` (Phase 7 - Purchase bills, Purchase items)
-- `V8__payments_expenses.sql` (Phase 8 - Cash/UPI Payments, Expenses)
-- `V9__reports.sql` (Phase 9-10 - Analytical indices & reporting views)
-- `V10__audit_logs.sql` (Phase 11 - Extended security audit triggers)
+All migrations are located in `backend/src/main/resources/db/migration/`:
+- `V1__initial_schema.sql` (Phase 1: Roles, users, business settings, audit logs)
+- `V2__authentication.sql` (Phase 2: RBAC permissions and default administrative accounts)
+- `V3__medicine_management.sql` (Phase 3: Categories, manufacturers, medicines)
+- `V4__inventory.sql` (Phase 4: Medicine batches and transactional stock ledger)
+- `V5__customers_suppliers.sql` (Phase 5: Customer and supplier ledgers with balance tracking)
+- `V6__sales.sql` (Phase 7: Retail sales, billing items, payment status, invoice sequences)
+- `V7__purchases.sql` (Phase 6: Inward purchase orders and batch inventory intake)
+- `V8__payments_expenses.sql` (Phase 8: Customer receipts, supplier payments, and expense tracking)
+- `V9__reports.sql` (Phase 10: Performance indexes for high-speed date-range reports)
+- `V10__audit_logs.sql` (Phase 11: Security audit indexes and store owner settings)
+
+---
+
+## 4. Production Database Deployment (Aiven)
+
+For complete instructions on provisioning and securing production PostgreSQL on Aiven:
+See [☁️ Aiven PostgreSQL Production Guide](AIVEN_POSTGRESQL.md).
+
