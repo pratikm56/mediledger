@@ -42,4 +42,16 @@ public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
 
     @Query("SELECT COUNT(p) FROM Purchase p WHERE p.paymentStatus = 'UNPAID' OR p.paymentStatus = 'PARTIAL'")
     Long countUnpaidPurchases();
+
+    @Query("SELECT COALESCE(SUM(p.totalAmount), 0) FROM Purchase p WHERE p.purchaseDate = :today")
+    BigDecimal sumPurchasesToday(@Param("today") LocalDate today);
+
+    @Query("SELECT COUNT(p) FROM Purchase p WHERE p.purchaseDate = :today")
+    Long countPurchasesToday(@Param("today") LocalDate today);
+
+    @Query("SELECT COALESCE(SUM(p.totalAmount), 0) FROM Purchase p WHERE p.purchaseDate BETWEEN :startDate AND :endDate")
+    BigDecimal sumPurchasesBetween(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    @Query("SELECT p.purchaseDate, COALESCE(SUM(p.totalAmount), 0), COUNT(p) FROM Purchase p WHERE p.purchaseDate BETWEEN :startDate AND :endDate GROUP BY p.purchaseDate ORDER BY p.purchaseDate ASC")
+    java.util.List<Object[]> getDailyPurchasesSummary(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 }

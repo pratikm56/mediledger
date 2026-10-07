@@ -42,6 +42,12 @@ public interface MedicineBatchRepository extends JpaRepository<MedicineBatch, Lo
     @Query("SELECT COALESCE(SUM(b.sellingPrice * b.quantity), 0) FROM MedicineBatch b")
     BigDecimal sumTotalSellingValuation();
 
+    @Query("SELECT COALESCE(SUM(b.mrp * b.quantity), 0) FROM MedicineBatch b")
+    BigDecimal sumTotalMrpValuation();
+
+    @Query("SELECT COUNT(b) FROM MedicineBatch b WHERE b.quantity > 0")
+    Long countActiveBatches();
+
     @Query("SELECT COUNT(b) FROM MedicineBatch b WHERE b.expiryDate < :currentDate AND b.quantity > 0")
     Long countExpiredBatches(@Param("currentDate") LocalDate currentDate);
 

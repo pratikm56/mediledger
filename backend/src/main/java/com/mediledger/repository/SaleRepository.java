@@ -47,6 +47,14 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
     @Query("SELECT COALESCE(SUM(s.totalAmount), 0) FROM Sale s WHERE s.saleDate = :today")
     BigDecimal sumSalesTodayAmount(@Param("today") LocalDate today);
 
+    @Query("SELECT COALESCE(SUM(s.totalAmount), 0) FROM Sale s WHERE s.saleDate BETWEEN :startDate AND :endDate")
+    BigDecimal sumSalesAmountBetween(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    @Query("SELECT s.saleDate, COALESCE(SUM(s.totalAmount), 0), COUNT(s) FROM Sale s WHERE s.saleDate BETWEEN :startDate AND :endDate GROUP BY s.saleDate ORDER BY s.saleDate ASC")
+    java.util.List<Object[]> getDailySalesSummary(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    java.util.List<Sale> findTop5ByOrderByCreatedAtDesc();
+
     @Query("SELECT COUNT(s) FROM Sale s WHERE s.paymentStatus = 'UNPAID' OR s.paymentStatus = 'PARTIAL'")
     Long countUnpaidSales();
 }

@@ -40,4 +40,10 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
     @Query("SELECT COUNT(e) FROM Expense e WHERE e.expenseDate = :today")
     Long countExpensesToday(@Param("today") LocalDate today);
+
+    @Query("SELECT COALESCE(SUM(e.amount), 0) FROM Expense e WHERE e.expenseDate BETWEEN :startDate AND :endDate")
+    BigDecimal sumExpensesBetween(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    @Query("SELECT e.expenseDate, COALESCE(SUM(e.amount), 0), COUNT(e) FROM Expense e WHERE e.expenseDate BETWEEN :startDate AND :endDate GROUP BY e.expenseDate ORDER BY e.expenseDate ASC")
+    java.util.List<Object[]> getDailyExpensesSummary(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 }

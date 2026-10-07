@@ -33,5 +33,7 @@ public interface MedicineRepository extends JpaRepository<Medicine, Long> {
 
     long countByManufacturerId(Long manufacturerId);
 
+    long countByActiveTrue();
+
     boolean existsByNameIgnoreCase(String name);
 }
